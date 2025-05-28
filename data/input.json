@@ -1,0 +1,20 @@
+{
+    "account_details": {
+        "account_id":"AS_1234",
+        "email_id":"something@gmail.com"
+    },
+    "product_details": {
+        "product_name":"vsync",
+        "subscription":{
+            "features": {
+                "no_of_users": 10,
+                "compare_quotation": true,
+                "two_way_reconciliation": true,
+                "three_way_reconciliation": false,
+                "AI_tokens_monthly": 1000,
+                "total_pdf_pages_monthly": 1000
+            }
+        }
+    }
+    
+}
