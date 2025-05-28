@@ -6,37 +6,14 @@ const aesEncrypt = require('../encryption/aesEncrypt');
 const base64Encode = require('../encryption/base64Encode');
 const { generateRandomString, generateKeyName } = require('../utils/generateRandoms');
 const { v4: uuidv4 } = require('uuid');
+const { generateApiKey } = require('../lib/generateApiKey');
 
 (async () => {
-  const chalk = (await import('chalk')).default;
-  const boxen = (await import('boxen')).default;
-
-  async function generateApiKey() {
-    const rawData = JSON.parse(fs.readFileSync('./data/input.json'));
-    const ea_key = uuidv4();
-    const salt = generateRandomString(16);
-    const secretKey = generateRandomString(32);
-    const key_name = generateKeyName();
-
-    const { account_id } = rawData.account_details;
-    const payload = { ...rawData.account_details, ...rawData.product_details };
-    const { encrypted, iv } = aesEncrypt(JSON.stringify(payload), secretKey, salt);
-
-    const apiKeyObj = {
-      ea_key,
-      key_name,
-      salt,
-      iv,
-      secretKey,
-      encrypted
-    };
-
-    const api_key = base64Encode(apiKeyObj);
-
-    await pool.query(
-      'INSERT INTO encoded_api_keys (ea_key, customer_id, key_name, api_key) VALUES ($1, $2, $3, $4)',
-      [ea_key, account_id, key_name, api_key]
-    );
+  async function run() {
+    const chalk = (await import('chalk')).default;
+    const boxen = (await import('boxen')).default;
+    const result = await generateApiKey();
+    const { ea_key, key_name, api_key, payload } = result;
 
     console.log(boxen(chalk.blue.bold('Input Metadata (from input.json):') + '\n\n' + JSON.stringify(payload, null, 2), {
       padding: 1,
@@ -51,5 +28,5 @@ const { v4: uuidv4 } = require('uuid');
       }));
   }
 
-  generateApiKey();
+  run();
 })();
